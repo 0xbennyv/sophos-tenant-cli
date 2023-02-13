@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/schollz/progressbar/v3"
 )
 
 type HealthCheck struct {
@@ -103,10 +105,13 @@ var timestamp time.Time
 
 func GetHeathCheck(jwt string) {
 	timestamp = time.Now()
-	for i, tenant := range Tenants {
+	total_tenants := len(Tenants)
+	bar := progressbar.Default(int64(total_tenants), "Running health checks on tenants...")
+	for _, tenant := range Tenants {
 		// Arrays start at 0, add + 1 for clenliness, otherwise it will say 0 of 1, 1 of 1, 2 of 1 etc.
 		// I'd like this to be updated with a charmed UI, but for now this will do.
-		fmt.Printf("Processed %d of %d \n", i+1, len(Tenants)+1)
+		bar.Add(1)
+		// fmt.Printf("Processed %d of %d \n", i+1, len(Tenants))
 		// Build string for URL
 		uri := tenant.ApiHost
 		url := uri + "/account-health-check/v1/health-check"
