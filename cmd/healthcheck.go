@@ -8,7 +8,7 @@ import (
 
 var healthCheck = &cobra.Command{
 	Use:     "healthsummary",
-	Short:   "Provies a summary of the health of the tenant, only tenants with something to report are shown.",
+	Short:   "Provides a summary of the health of the tenant, only tenants with something to report are shown.",
 	Aliases: []string{"summary"},
 	Run: func(cmd *cobra.Command, args []string) {
 		sophos.Execute()
