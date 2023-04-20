@@ -21,14 +21,23 @@ jobs:
           go-version: 1.18
 
       - name: Build for Linux
-        run: GOOS=linux GOARCH=amd64 go build -o linux_sophos_cli
+        run: GOOS=linux GOARCH=amd64 go build -o sophos_cli
+        
+      - name: Zip Linux binary
+        run: zip sophos_cli_linux.zip linux_sophos_cli
 
       - name: Build for macOS
-        run: GOOS=darwin go build -o macos_sophos_cli
+        run: GOOS=darwin go build -o sophos_cli
+      
+      - name: Zip macOS binary
+        run: zip sophos_cli_macos.zip sophos_cli
 
       - name: Build for Windows
-        run: GOOS=windows GOARCH=amd64 go build -o win_sophos_cli.exe
-      
+        run: GOOS=windows GOARCH=amd64 go build -o sophos_cli.exe
+
+      - name: Zip Windows binary
+        run: zip sophos_cli_windows.zip win_sophos_cli.exe
+
       - name: Get version number
         id: version
         run: |
@@ -52,24 +61,6 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload Linux binary
-        uses: actions/upload-artifact@v2
-        with:
-          name: sophos_cli
-          path: ./linux_sophos_cli
-
-      - name: Upload macOS binary
-        uses: actions/upload-artifact@v2
-        with:
-          name: sophos_cli
-          path: ./macos_sophos_cli
-
-      - name: Upload Windows binary
-        uses: actions/upload-artifact@v2
-        with:
-          name: sophos_cli
-          path: ./win_sophos_cli.exe
-
       - name: Attach Linux binary to release
         id: attach_linux_binary
         uses: actions/upload-release-asset@v1.0.2
@@ -77,9 +68,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./linux_sophos_cli
-          asset_name: sophos_cli
-          asset_content_type: application/octet-stream
+          asset_path: ./sophos_cli_linux.zip
+          asset_name: sophos_cli_linux.zip
+          asset_content_type: application/zip
 
       - name: Attach macOS binary to release
         id: attach_macos_binary
@@ -88,9 +79,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./macos_sophos_cli
-          asset_name: sophos_cli
-          asset_content_type: application/octet-stream
+          asset_path: ./sophos_cli_macos.zip
+          asset_name: sophos_cli_macos.zip
+          asset_content_type: application/zip
 
       - name: Attach Windows binary to release
         id: attach_windows_binary
@@ -99,6 +90,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./win_sophos_cli.exe
-          asset_name: sophos_cli.exe
-          asset_content_type: application/octet-stream
+          asset_path: ./sophos_cli_windows.zip
+          asset_name: sophos_cli_windows.zip
+          asset_content_type: application/zip
+
