@@ -23,11 +23,17 @@ jobs:
       - name: Build for Linux
         run: GOOS=linux GOARCH=amd64 go build -o sophos_cli
         
+      - name: Make Linux binary executable
+        run: chmod +x sophos_cli
+        
       - name: Zip Linux binary
         run: zip sophos_cli_linux.zip sophos_cli
 
       - name: Build for macOS
         run: GOOS=darwin go build -o sophos_cli
+        
+      - name: Make MacOS binary executable
+        run: chmod +x sophos_cli
       
       - name: Zip macOS binary
         run: zip sophos_cli_macos.zip sophos_cli
