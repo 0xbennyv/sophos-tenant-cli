@@ -36,7 +36,7 @@ jobs:
         run: GOOS=windows GOARCH=amd64 go build -o sophos_cli.exe
 
       - name: Zip Windows binary
-        run: zip sophos_cli_windows.zip win_sophos_cli.exe
+        run: zip sophos_cli_windows.zip sophos_cli.exe
 
       - name: Get version number
         id: version
