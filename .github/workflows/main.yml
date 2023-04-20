@@ -33,8 +33,8 @@ jobs:
         run: |
           COMMIT_MESSAGE="$(git log -1 --pretty=format:'%s')"
           COMMITS_SINCE_TAG="$(git rev-list --count $(git describe --tags --abbrev=0 HEAD)..HEAD)"
-          echo "::set-env name=COMMIT_MESSAGE::$COMMIT_MESSAGE"
-          echo "::set-env name=COMMITS_SINCE_TAG::$COMMITS_SINCE_TAG"
+          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
+          echo "COMMITS_SINCE_TAG=$COMMITS_SINCE_TAG" >> $GITHUB_ENV
           
       - name: Create release
         id: create_release
