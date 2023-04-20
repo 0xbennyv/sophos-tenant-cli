@@ -4,9 +4,12 @@
 *.dll
 *.so
 *.dylib
-
+*.json
+*.log
+*.csv
 # Test binary, built with `go test -c`
 *.test
+sophos_tenant_cli_*
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
