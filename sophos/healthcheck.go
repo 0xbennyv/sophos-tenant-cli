@@ -174,12 +174,18 @@ func GetHeathCheck(jwt string) {
 }
 
 func WriteCSV() {
-	filename := timestamp.Format("2006_01_02_15_04") + "_healthcheck.csv"
+	// Check to see if healthcheck already exists
+	if CheckFileExists("healthcheck.csv") {
+		fileName := timestamp.Format("2006_01_02_15_04") + "_healthcheck.csv"
+		os.Rename("healthcheck.csv", fileName)
+	}
+
 	// Create a file
-	csvFile, err := os.Create(filename)
+	csvFile, err := os.Create("healthcheck.csv")
 	if err != nil {
 		log.Fatalf("An Error Occured %v", err)
 	}
+
 	// Create a writer
 	csvWriter := csv.NewWriter(csvFile)
 	defer csvWriter.Flush()
@@ -273,6 +279,16 @@ func WriteCSV() {
 			}
 		}
 	}
+}
+
+func CheckFileExists(filePath string) bool {
+	_, err := os.Stat(filePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
 }
 
 // Removing for now, rate limiting prevents the use of concurrent calls.
