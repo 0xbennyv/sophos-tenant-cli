@@ -103,7 +103,16 @@ type HealthExclusions struct {
 var HealthChecks []HealthCheck
 var timestamp time.Time
 
+const rateLimit = 99
+var requestCounter int
+
 func GetHeathCheck(jwt string) {
+	// Rate limiting check
+    if requestCounter >= rateLimit {
+		fmt.Println("Too many requests, pausing to prevent rate limiting enforcement.")
+        time.Sleep(1 * time.Minute)
+        requestCounter = 0
+    }
 	timestamp = time.Now()
 	total_tenants := len(Tenants)
 	bar := progressbar.Default(int64(total_tenants), "Running health checks on tenants...")
@@ -143,6 +152,7 @@ func GetHeathCheck(jwt string) {
 			healthcheck.TenantId = tenant.Id
 			healthcheck.TenantName = tenant.Name
 			HealthChecks = append(HealthChecks, *healthcheck)
+			requestCounter++
 
 		} else if resp.StatusCode == 429 {
 			// If we get a 429, we need to wait 2 seconds and try again. to get around rate limiting
