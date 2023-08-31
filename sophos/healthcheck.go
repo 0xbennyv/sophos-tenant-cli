@@ -103,20 +103,32 @@ type HealthExclusions struct {
 var HealthChecks []HealthCheck
 var timestamp time.Time
 
-const rateLimit = 99
-var requestCounter int
-
 func GetHeathCheck(jwt string) {
-	// Rate limiting check
-    if requestCounter >= rateLimit {
-		fmt.Println("Too many requests, pausing to prevent rate limiting enforcement.")
-        time.Sleep(1 * time.Minute)
-        requestCounter = 0
-    }
+	const rateLimit = 100 // Number of requests per minute
+	timestamps := make([]time.Time, 0)
+
 	timestamp = time.Now()
 	total_tenants := len(Tenants)
 	bar := progressbar.Default(int64(total_tenants), "Running health checks on tenants...")
 	for _, tenant := range Tenants {
+		now := time.Now()
+		// Filter out timestamps older than 1 minute
+		recentTimestamps := make([]time.Time, 0)
+		for _, t := range timestamps {
+			if now.Sub(t) < time.Minute {
+				recentTimestamps = append(recentTimestamps, t)
+			}
+		}
+		timestamps = recentTimestamps
+		// If rate limit is reached, sleep for the necessary duration
+		if len(timestamps) >= rateLimit {
+			sleepDuration := time.Minute - now.Sub(timestamps[0])
+			time.Sleep(sleepDuration)
+			now = time.Now() // Update current time after sleep
+		}
+		// Add the current timestamp to the slice
+		timestamps = append(timestamps, now)
+
 		// Arrays start at 0, add + 1 for clenliness, otherwise it will say 0 of 1, 1 of 1, 2 of 1 etc.
 		// I'd like this to be updated with a charmed UI, but for now this will do.
 		bar.Add(1)
@@ -152,7 +164,6 @@ func GetHeathCheck(jwt string) {
 			healthcheck.TenantId = tenant.Id
 			healthcheck.TenantName = tenant.Name
 			HealthChecks = append(HealthChecks, *healthcheck)
-			requestCounter++
 
 		} else if resp.StatusCode == 429 {
 			// If we get a 429, we need to wait 2 seconds and try again. to get around rate limiting
