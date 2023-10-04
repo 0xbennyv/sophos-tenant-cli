@@ -1,8 +1,13 @@
-# Sophos Tenant API's
-A multiplatform CLI application for working with Sophos Enterprise Dashbaord and Partner Dashboard API's
+# Sophos Dashboard CLI Tool
+A multiplatform command-line interface designed for both Sophos Enterprise and Partner Dashboard APIs.
 
-This applications initial intent is to summarise the health report API for every Sophos tenant in a partner or enterprise tenant.
+**Primary Purpose**: 
+- Streamline and present a concise health report for every tenant within a Sophos partner or enterprise environment.
 
-On initial run if config.json isn't within the directory of the binary then a prompt will appear to set the enterprise or partner tenants API credentials.
+## Key Features:
 
-Once the credentials have been set the application must be run as a cli the "sophos_tenant_cli.exe healthsummary" will run the health summary function to check every availible tenant and build a CSV of troubled tenants.
+1. **Automated Configuration**: 
+   - Upon first launch, if `config.json` is absent in the application's directory, users will be prompted to input either enterprise or partner API credentials.
+   
+2. **CLI Execution**: 
+   - After setting up the credentials, execute the tool via the command line. Using the command `sophos_tenant_cli.exe healthsummary` will trigger a comprehensive health check across all accessible tenants, compiling a CSV list of those that require attention.
